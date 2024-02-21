@@ -37,7 +37,9 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
   const isSubmitting = form.formState.isSubmitting;
 
-  const onSubmit = (values: z.infer<typeof LoginSchema>) => console.log(values);
+  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+    console.log(values);
+  };
 
   return (
     <div className={cn('grid gap-6', className)} {...props}>
