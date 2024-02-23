@@ -5,13 +5,11 @@ const Home = () => {
 };
 
 export const Route = createFileRoute('/')({
-  beforeLoad: ({ context, location }) => {
+  beforeLoad: ({ context }) => {
     if (!context.auth) {
+      console.log(context.auth);
       throw redirect({
         to: '/login',
-        search: {
-          redirect: location.href,
-        },
       });
     }
   },

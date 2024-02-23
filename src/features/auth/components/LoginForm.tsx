@@ -14,18 +14,35 @@ import {
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
+import { useMutation } from '@tanstack/react-query';
+import { loginWithEmailAndPassword } from '..';
+import { useStore } from '@/stores';
+import storage from '@/utils/storage';
+import { useNavigate } from '@tanstack/react-router';
 
 interface LoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const LoginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
-  password: z
-    .string()
-    .min(6, { message: 'Password must be at least  6 characters long' }),
+  password: z.string().min(5, { message: 'Password must be at least 5 characters long' }),
 });
+// const routeApi = getRouteApi('/login');
 
 export function LoginForm({ className, ...props }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const updateUser = useStore((state) => state.updateUser);
+  const navigate = useNavigate();
+  // const search = routeApi.useSearch();
+
+  const loginMutation = useMutation({
+    mutationFn: (loginParams: z.infer<typeof LoginSchema>) =>
+      loginWithEmailAndPassword(loginParams),
+    onSuccess(data) {
+      updateUser(data.user);
+      storage.setToken(data.token);
+      navigate({ to: '/' });
+    },
+  });
 
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -35,10 +52,8 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
     },
   });
 
-  const isSubmitting = form.formState.isSubmitting;
-
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-    console.log(values);
+    loginMutation.mutate(values);
   };
 
   return (
@@ -71,34 +86,35 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
               control={form.control}
               name="password"
               render={({ field }) => (
-                <>
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="password"
-                        placeholder="Password"
-                        type="password"
-                        autoCapitalize="none"
-                        autoCorrect="off"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                <FormItem className="relative">
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      id="password"
+                      placeholder="Password"
+                      type="password"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      {...field}
+                    />
+                  </FormControl>
                   <Button
                     className="absolute bottom-0 right-2 px-2 hover:bg-transparent"
                     variant="ghost"
                     size="icon"
+                    type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
                   >
                     {showPassword ? <Eye /> : <EyeOff />}
                   </Button>
-                </>
+                  <FormMessage />
+                </FormItem>
               )}
             />
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" disabled={loginMutation.isPending}>
+              {loginMutation.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Login
             </Button>
           </div>
