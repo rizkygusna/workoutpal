@@ -16,3 +16,7 @@ export const loginWithEmailAndPassword = (
 ): Promise<UserResponse> => {
   return axiosInstance.post('/auth/login', data);
 };
+
+export const getUser = (email: string): Promise<User> => {
+  return axiosInstance.get(`/auth/user?email=${email}`);
+};
