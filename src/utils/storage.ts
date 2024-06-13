@@ -1,24 +1,26 @@
 import { User } from '@/features/auth';
 
+const prefix = 'workoutpal_';
+
 const storage = {
   getToken: () => {
-    return window.localStorage.getItem('token');
+    return window.localStorage.getItem(prefix + 'token');
   },
   setToken: (token: string) => {
-    window.localStorage.setItem('token', token);
+    window.localStorage.setItem(prefix + 'token', token);
   },
   clearToken: () => {
-    window.localStorage.removeItem('token');
+    window.localStorage.removeItem(prefix + 'token');
   },
   getUser: () => {
-    const user = window.localStorage.getItem('user');
+    const user = window.localStorage.getItem(prefix + 'user');
     return user ? JSON.parse(user) : undefined;
   },
   setUser: (user: User) => {
-    window.localStorage.setItem('user', JSON.stringify(user));
+    window.localStorage.setItem(prefix + 'user', JSON.stringify(user));
   },
   clearUser: () => {
-    window.localStorage.removeItem('user');
+    window.localStorage.removeItem(prefix + 'user');
   },
 };
 
