@@ -19,6 +19,7 @@ import { loginWithEmailAndPassword } from '..';
 import { useStore } from '@/stores';
 import storage from '@/utils/storage';
 import { useNavigate } from '@tanstack/react-router';
+import { flushSync } from 'react-dom';
 
 interface LoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -37,9 +38,12 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   const loginMutation = useMutation({
     mutationFn: (loginParams: z.infer<typeof LoginSchema>) =>
       loginWithEmailAndPassword(loginParams),
-    onSuccess(data) {
-      updateUser(data.user);
+    onSuccess: (data) => {
       storage.setToken(data.token);
+      storage.setUser(data.user);
+      flushSync(() => {
+        updateUser(data.user);
+      });
       navigate({ to: '/' });
     },
   });
@@ -92,7 +96,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                     <Input
                       id="password"
                       placeholder="Password"
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       autoCapitalize="none"
                       autoCorrect="off"
                       {...field}
