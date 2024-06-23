@@ -3,6 +3,7 @@ import { MutationConfig } from '@/lib/react-query';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import { ExerciseList } from './get-exercise-lists';
+import { getExerciseListByIdQueryOptions } from './get-exercise-list-by-id';
 
 export const updateExerciseListInputSchema = z.object({
   listName: z.string().min(1, 'Required'),
@@ -33,11 +34,11 @@ export const useCreateExerciseList = ({
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
   return useMutation({
-    onSuccess: (...args) => {
+    onSuccess: (data, ...args) => {
       queryClient.invalidateQueries({
-        queryKey: ['exerciseLists'],
+        queryKey: getExerciseListByIdQueryOptions({ listId: data.id }).queryKey,
       });
-      onSuccess?.(...args);
+      onSuccess?.(data, ...args);
     },
     ...restConfig,
     mutationFn: updateExerciseList,
