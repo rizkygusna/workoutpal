@@ -1,28 +1,34 @@
 import { axiosInstance } from '@/lib/axios';
-import { ExerciseList } from './get-exercise-lists';
 import { MutationConfig } from '@/lib/react-query';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
+import { ExerciseList } from './get-exercise-lists';
 
-export const createExerciseListInputSchema = z.object({
+export const updateExerciseListInputSchema = z.object({
   listName: z.string().min(1, 'Required'),
   description: z.string().min(1).nullable(),
-  userId: z.string().min(1, 'Required'),
 });
 
-export type CreateExerciseListParams = z.infer<typeof createExerciseListInputSchema>;
+export type UpdateExerciseListParams = z.infer<typeof updateExerciseListInputSchema>;
 
-const createExerciseList = (params: CreateExerciseListParams): Promise<ExerciseList> => {
-  return axiosInstance.post('/exerciseLists', params);
+// must have one parameter
+export const updateExerciseList = ({
+  exerciseListId,
+  params,
+}: {
+  exerciseListId: string;
+  params: UpdateExerciseListParams;
+}): Promise<ExerciseList> => {
+  return axiosInstance.put('/exerciseLists/' + exerciseListId, params);
 };
 
-type UseCreateExerciseListOptions = {
-  mutationConfig?: MutationConfig<typeof createExerciseList>;
+type UseUpdateExerciseListOptions = {
+  mutationConfig?: MutationConfig<typeof updateExerciseList>;
 };
 
 export const useCreateExerciseList = ({
   mutationConfig,
-}: UseCreateExerciseListOptions = {}) => {
+}: UseUpdateExerciseListOptions = {}) => {
   const queryClient = useQueryClient();
   const { onSuccess, ...restConfig } = mutationConfig || {};
 
@@ -34,6 +40,6 @@ export const useCreateExerciseList = ({
       onSuccess?.(...args);
     },
     ...restConfig,
-    mutationFn: createExerciseList,
+    mutationFn: updateExerciseList,
   });
 };
