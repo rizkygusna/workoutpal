@@ -9,11 +9,17 @@ interface MyRouterContext {
   queryClient: QueryClient;
 }
 
+const notFoundComponent = () => (
+  <div className="flex justify-center items-center w-full h-svh">
+    <h1>404 Not Found</h1>,
+  </div>
+);
+
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
-    <div>
+    <div className="root-route">
       <Outlet />
     </div>
   ),
-  notFoundComponent: () => <h1>404 Not Found</h1>,
+  notFoundComponent: notFoundComponent,
 });
