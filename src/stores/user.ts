@@ -1,4 +1,5 @@
 import { User } from '@/features/auth';
+import storage from '@/utils/storage';
 import { StateCreator } from 'zustand';
 
 export interface UserSlice {
@@ -7,6 +8,6 @@ export interface UserSlice {
 }
 
 export const createUserSlice: StateCreator<UserSlice> = (set) => ({
-  user: undefined,
+  user: storage.getUser(),
   updateUser: (user: User) => set(() => ({ user: user })),
 });

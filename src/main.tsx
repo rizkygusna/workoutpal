@@ -5,10 +5,10 @@ import { queryClient } from './lib/react-query';
 import { useStore } from './stores';
 import { RouterProvider } from '@tanstack/react-router';
 import { router } from './router';
+import { StrictMode } from 'react';
 
 const InnerApp = () => {
   const user = useStore((state) => state.user);
-  console.log(user);
   return <RouterProvider router={router} context={{ auth: user }} />;
 };
 
@@ -26,5 +26,9 @@ const rootElement = document.getElementById('root')!;
 
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
-  root.render(<App />);
+  root.render(
+    <StrictMode>
+      <App />
+    </StrictMode>
+  );
 }

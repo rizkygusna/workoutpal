@@ -18,8 +18,6 @@ import { useMutation } from '@tanstack/react-query';
 import { loginWithEmailAndPassword } from '..';
 import { useStore } from '@/stores';
 import storage from '@/utils/storage';
-import { useNavigate } from '@tanstack/react-router';
-import { flushSync } from 'react-dom';
 
 interface LoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -27,13 +25,10 @@ const LoginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
   password: z.string().min(5, { message: 'Password must be at least 5 characters long' }),
 });
-// const routeApi = getRouteApi('/login');
 
 export function LoginForm({ className, ...props }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const updateUser = useStore((state) => state.updateUser);
-  const navigate = useNavigate();
-  // const search = routeApi.useSearch();
 
   const loginMutation = useMutation({
     mutationFn: (loginParams: z.infer<typeof LoginSchema>) =>
@@ -41,10 +36,8 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
     onSuccess: (data) => {
       storage.setToken(data.token);
       storage.setUser(data.user);
-      flushSync(() => {
-        updateUser(data.user);
-      });
-      navigate({ to: '/' });
+      updateUser(data.user);
+      window.location.assign('/');
     },
   });
 
