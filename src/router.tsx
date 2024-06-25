@@ -11,4 +11,5 @@ export const router = createRouter({
     auth: undefined!,
     queryClient: queryClient,
   },
+  defaultPreloadStaleTime: 0,
 });
