@@ -8,7 +8,7 @@ import { router } from './router';
 import { StrictMode } from 'react';
 
 const InnerApp = () => {
-  const user = useStore((state) => state.user);
+  const user = useStore((state) => state);
   return <RouterProvider router={router} context={{ auth: user }} />;
 };
 

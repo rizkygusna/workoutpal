@@ -20,6 +20,7 @@ export const getExerciseListsQueryOptions = (params: GetExerciseListsParams) => 
   return queryOptions({
     queryKey: ['exerciseLists', params],
     queryFn: () => getExerciseLists(params),
+    enabled: !!params.userId,
   });
 };
 

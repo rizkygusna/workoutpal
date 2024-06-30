@@ -4,10 +4,12 @@ import { StateCreator } from 'zustand';
 
 export interface UserSlice {
   user: User | undefined;
-  updateUser: (user: User) => void;
+  isAuthenticated: boolean;
+  updateUser: (user: User | undefined) => void;
 }
 
 export const createUserSlice: StateCreator<UserSlice> = (set) => ({
   user: storage.getUser(),
-  updateUser: (user: User) => set(() => ({ user: user })),
+  isAuthenticated: !!storage.getUser(),
+  updateUser: (user: User | undefined) => set(() => ({ user: user })),
 });
