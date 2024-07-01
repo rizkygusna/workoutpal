@@ -1,20 +1,28 @@
-import { useState } from 'react';
 import { ExerciseList } from '../api/get-exercise-lists';
 import { EllipsisVertical } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface IProps extends ExerciseList {
   handleClick: () => void;
+  handleClickEdit: () => void;
+  handleClickDelete: () => void;
 }
 
-const ExerciseCard = ({ name, description, handleClick }: IProps) => {
-  const [isHovered, setisHovered] = useState<boolean>(false);
-
+const ExerciseCard = ({
+  name,
+  description,
+  handleClick,
+  handleClickDelete,
+  handleClickEdit,
+}: IProps) => {
   return (
-    <div
-      className="flex flex-row justify-between px-2 py-4 hover:cursor-pointer"
-      onMouseOver={() => setisHovered(true)}
-      onMouseOut={() => setisHovered(false)}
-    >
+    <div className="flex flex-row justify-between px-2 py-4 hover:cursor-pointer">
       <div
         onClick={() => {
           handleClick();
@@ -24,17 +32,17 @@ const ExerciseCard = ({ name, description, handleClick }: IProps) => {
         <h3 className="text-xl">{name}</h3>
         <p className="text-sm text-muted-foreground">{description}</p>
       </div>
-      {isHovered ? (
-        <div className="flex flex-col justify-center">
-          <button
-            onClick={() => {
-              console.log('options clicked');
-            }}
-          >
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost">
             <EllipsisVertical />
-          </button>
-        </div>
-      ) : null}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem onClick={() => handleClickEdit()}>Edit</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => handleClickDelete()}>Delete</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };

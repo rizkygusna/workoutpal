@@ -17,13 +17,10 @@ import { useEffect } from 'react';
 const Home = () => {
   const user = useStore((state) => state.user);
   const navigate = useNavigate();
+
   const { data, isLoading, isError } = useQuery(
     getExerciseListsQueryOptions({ userId: user!.email })
   );
-  // const { data, isLoading, isError } = useGetExerciseLists({
-  //   params: { userId: user.email },
-  //   queryConfig: { enabled: !!user },
-  // });
 
   useEffect(() => {
     if (isLoading || !isError) return;
@@ -45,12 +42,13 @@ const Home = () => {
               <Skeleton className="w-full h-[48px] mx-2 my-4" />
             </>
           ) : (
-            // </div>
             data?.map((exerciseList) => (
               <ExerciseCard
                 key={exerciseList.id}
                 {...exerciseList}
                 handleClick={() => navigate({ to: `/exerciseLists/${exerciseList.id}` })}
+                handleClickEdit={() => console.log('Edit ', exerciseList.id)}
+                handleClickDelete={() => console.log('Delete', exerciseList.id)}
               ></ExerciseCard>
             ))
           )}
