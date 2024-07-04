@@ -7,10 +7,10 @@ import {
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getExerciseListsQueryOptions } from '@/features/exercise-list/api/get-exercise-lists';
+import { CreateExerciseListDialog } from '@/features/exercise-list/components/CreateExerciseListDialog';
 import ExerciseCard from '@/features/exercise-list/components/ExerciseCard';
 import { useStore } from '@/stores';
 import { useQuery } from '@tanstack/react-query';
-// import storage from '@/utils/storage';
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
@@ -31,8 +31,15 @@ const Home = () => {
     <>
       <Card className="mx-4 sm:mx-0">
         <CardHeader>
-          <CardTitle>Exercise Lists</CardTitle>
-          <CardDescription>List of your programs or exercises.</CardDescription>
+          <div className="flex flex-row justify-between items-center">
+            <div>
+              <CardTitle>Exercise Lists</CardTitle>
+              <CardDescription>List of your programs or exercises.</CardDescription>
+            </div>
+            <div>
+              <CreateExerciseListDialog />
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (

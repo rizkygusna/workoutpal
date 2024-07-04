@@ -27,7 +27,7 @@ type UseUpdateExerciseListOptions = {
   mutationConfig?: MutationConfig<typeof updateExerciseList>;
 };
 
-export const useCreateExerciseList = ({
+export const useUpdateExerciseList = ({
   mutationConfig,
 }: UseUpdateExerciseListOptions = {}) => {
   const queryClient = useQueryClient();
