@@ -3,7 +3,7 @@ import { MutationConfig } from '@/lib/react-query';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const deleteExerciseList = (listId: string) => {
-  return axiosInstance.delete('/exerciseList/' + listId);
+  return axiosInstance.delete('/exerciseLists/' + listId);
 };
 
 type UseDeleteExerciseListOptions = {

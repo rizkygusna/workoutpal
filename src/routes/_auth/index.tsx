@@ -1,3 +1,4 @@
+import ConfirmationDialog from '@/components/ConfirmationDialog';
 import {
   Card,
   CardContent,
@@ -6,21 +7,44 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useDeleteExerciseList } from '@/features/exercise-list/api/delete-exercise-list';
 import { getExerciseListsQueryOptions } from '@/features/exercise-list/api/get-exercise-lists';
 import { CreateExerciseListDialog } from '@/features/exercise-list/components/CreateExerciseListDialog';
 import ExerciseCard from '@/features/exercise-list/components/ExerciseCard';
 import { useStore } from '@/stores';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const Home = () => {
   const user = useStore((state) => state.user);
   const navigate = useNavigate();
+  const [openConfirmDialog, setopenConfirmDialog] = useState<boolean>(false);
+  const selectedListId = useRef<string | null>(null);
 
   const { data, isLoading, isError } = useQuery(
     getExerciseListsQueryOptions({ userId: user!.email })
   );
+
+  const { mutate, isPending } = useDeleteExerciseList({
+    mutationConfig: {
+      onSuccess: () => {
+        setopenConfirmDialog(false);
+        selectedListId.current = null;
+      },
+    },
+  });
+
+  // integrate delete exercise list
+  const handleClickDelete = (id: string) => {
+    selectedListId.current = id;
+    setopenConfirmDialog(true);
+  };
+
+  const handleClickOk = () => {
+    if (!selectedListId.current) return;
+    mutate(selectedListId.current);
+  };
 
   useEffect(() => {
     if (isLoading || !isError) return;
@@ -55,12 +79,18 @@ const Home = () => {
                 {...exerciseList}
                 handleClick={() => navigate({ to: `/exerciseLists/${exerciseList.id}` })}
                 handleClickEdit={() => console.log('Edit ', exerciseList.id)}
-                handleClickDelete={() => console.log('Delete', exerciseList.id)}
+                handleClickDelete={() => handleClickDelete(exerciseList.id)}
               ></ExerciseCard>
             ))
           )}
         </CardContent>
       </Card>
+      <ConfirmationDialog
+        open={openConfirmDialog}
+        isLoading={isPending}
+        handleClickOk={handleClickOk}
+        handleClose={() => setopenConfirmDialog(false)}
+      />
     </>
   );
 };

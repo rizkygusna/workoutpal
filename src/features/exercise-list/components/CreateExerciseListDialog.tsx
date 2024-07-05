@@ -77,12 +77,11 @@ export function CreateExerciseListDialog() {
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                  <FormItem className="grid grid-cols-4 items-baseline gap-4">
                     <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input id="name" className="col-span-3" {...field} />
                     </FormControl>
-                    {/* <FormDescription>Your list name.</FormDescription> */}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -91,12 +90,11 @@ export function CreateExerciseListDialog() {
                 control={form.control}
                 name="description"
                 render={({ field }) => (
-                  <FormItem className="grid grid-cols-4 items-center gap-4">
+                  <FormItem className="grid grid-cols-4 items-baseline gap-4">
                     <FormLabel>Description</FormLabel>
                     <FormControl>
                       <Input id="description" className="col-span-3" {...field} />
                     </FormControl>
-                    {/* <FormDescription>Your list description.</FormDescription> */}
                     <FormMessage />
                   </FormItem>
                 )}
