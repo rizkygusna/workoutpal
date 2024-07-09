@@ -7,10 +7,18 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  ExerciseListFormSchema,
+  useCreateExerciseList,
+} from '@/features/exercise-list/api/create-exercise-list';
 import { useDeleteExerciseList } from '@/features/exercise-list/api/delete-exercise-list';
-import { getExerciseListsQueryOptions } from '@/features/exercise-list/api/get-exercise-lists';
-import { CreateExerciseListDialog } from '@/features/exercise-list/components/CreateExerciseListDialog';
+import {
+  ExerciseList,
+  getExerciseListsQueryOptions,
+} from '@/features/exercise-list/api/get-exercise-lists';
+import { useUpdateExerciseList } from '@/features/exercise-list/api/update-exercise-list';
 import ExerciseCard from '@/features/exercise-list/components/ExerciseCard';
+import ExerciseListFormDialog from '@/features/exercise-list/components/ExerciseListFormDialog';
 import { useStore } from '@/stores';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
@@ -20,30 +28,68 @@ const Home = () => {
   const user = useStore((state) => state.user);
   const navigate = useNavigate();
   const [openConfirmDialog, setopenConfirmDialog] = useState<boolean>(false);
-  const selectedListId = useRef<string | null>(null);
+  const [openExerciseListFormDialog, setOpenExerciseListFormDialog] =
+    useState<boolean>(false);
+  const selectedExerciseList = useRef<ExerciseList | null>(null);
 
   const { data, isLoading, isError } = useQuery(
     getExerciseListsQueryOptions({ userId: user!.email })
   );
 
-  const { mutate, isPending } = useDeleteExerciseList({
-    mutationConfig: {
-      onSuccess: () => {
-        setopenConfirmDialog(false);
-        selectedListId.current = null;
+  const { mutate: deleteExerciseList, isPending: isPendingDeleteExerciseList } =
+    useDeleteExerciseList({
+      mutationConfig: {
+        onSuccess: () => {
+          setopenConfirmDialog(false);
+          selectedExerciseList.current = null;
+        },
       },
-    },
-  });
+    });
 
-  // integrate delete exercise list
-  const handleClickDelete = (id: string) => {
-    selectedListId.current = id;
+  const { mutate: createExerciseList, isPending: isPendingCreateExerciseList } =
+    useCreateExerciseList({
+      mutationConfig: {
+        onSuccess: () => {
+          setOpenExerciseListFormDialog(false);
+        },
+      },
+    });
+
+  const { mutate: updateExerciseList, isPending: isPendingUpdateExerciseList } =
+    useUpdateExerciseList({
+      mutationConfig: {
+        onSuccess: () => {
+          setOpenExerciseListFormDialog(false);
+          selectedExerciseList.current = null;
+        },
+      },
+    });
+
+  const handleClickDelete = (exerciseList: ExerciseList) => {
+    selectedExerciseList.current = exerciseList;
     setopenConfirmDialog(true);
   };
 
   const handleClickOk = () => {
-    if (!selectedListId.current) return;
-    mutate(selectedListId.current);
+    if (!selectedExerciseList.current) return;
+    deleteExerciseList(selectedExerciseList.current.id);
+  };
+
+  const handleClickEdit = (exerciseList: ExerciseList) => {
+    setOpenExerciseListFormDialog(true);
+    selectedExerciseList.current = exerciseList;
+  };
+
+  const handleSubmit = (values: ExerciseListFormSchema) => {
+    if (!user) return;
+    if (selectedExerciseList.current) {
+      updateExerciseList({
+        exerciseListId: selectedExerciseList.current.id,
+        params: values,
+      });
+    } else {
+      createExerciseList({ ...values, userId: user.email });
+    }
   };
 
   useEffect(() => {
@@ -61,7 +107,17 @@ const Home = () => {
               <CardDescription>List of your programs or exercises.</CardDescription>
             </div>
             <div>
-              <CreateExerciseListDialog />
+              <ExerciseListFormDialog
+                open={openExerciseListFormDialog}
+                handleClose={() => setOpenExerciseListFormDialog(false)}
+                handleSubmit={(values) => handleSubmit(values)}
+                exerciseList={selectedExerciseList.current}
+                isLoading={
+                  selectedExerciseList.current
+                    ? isPendingUpdateExerciseList
+                    : isPendingCreateExerciseList
+                }
+              />
             </div>
           </div>
         </CardHeader>
@@ -78,8 +134,8 @@ const Home = () => {
                 key={exerciseList.id}
                 {...exerciseList}
                 handleClick={() => navigate({ to: `/exerciseLists/${exerciseList.id}` })}
-                handleClickEdit={() => console.log('Edit ', exerciseList.id)}
-                handleClickDelete={() => handleClickDelete(exerciseList.id)}
+                handleClickEdit={() => handleClickEdit(exerciseList)}
+                handleClickDelete={() => handleClickDelete(exerciseList)}
               ></ExerciseCard>
             ))
           )}
@@ -87,7 +143,7 @@ const Home = () => {
       </Card>
       <ConfirmationDialog
         open={openConfirmDialog}
-        isLoading={isPending}
+        isLoading={isPendingDeleteExerciseList}
         handleClickOk={handleClickOk}
         handleClose={() => setopenConfirmDialog(false)}
       />
