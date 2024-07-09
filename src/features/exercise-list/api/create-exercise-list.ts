@@ -4,13 +4,16 @@ import { MutationConfig } from '@/lib/react-query';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
-export const createExerciseListInputSchema = z.object({
-  listName: z.string().min(1, 'Required'),
-  description: z.string().min(1).nullable(),
-  userId: z.string().min(1, 'Required'),
+export const exerciseListFormSchema = z.object({
+  listName: z.string().min(2).max(50),
+  description: z.string(),
 });
 
-export type CreateExerciseListParams = z.infer<typeof createExerciseListInputSchema>;
+export type ExerciseListFormSchema = z.infer<typeof exerciseListFormSchema>;
+
+export interface CreateExerciseListParams extends ExerciseListFormSchema {
+  userId: string;
+}
 
 const createExerciseList = (params: CreateExerciseListParams): Promise<ExerciseList> => {
   return axiosInstance.post('/exerciseLists', params);

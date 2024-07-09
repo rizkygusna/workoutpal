@@ -1,25 +1,20 @@
 import { axiosInstance } from '@/lib/axios';
 import { MutationConfig } from '@/lib/react-query';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { z } from 'zod';
 import { ExerciseList } from './get-exercise-lists';
 import { getExerciseListByIdQueryOptions } from './get-exercise-list-by-id';
+import { ExerciseListFormSchema } from './create-exercise-list';
 
-export const updateExerciseListInputSchema = z.object({
-  listName: z.string().min(1, 'Required'),
-  description: z.string().min(1).nullable(),
-});
-
-export type UpdateExerciseListParams = z.infer<typeof updateExerciseListInputSchema>;
+interface UpdateExerciseListParams {
+  exerciseListId: string;
+  params: ExerciseListFormSchema;
+}
 
 // must have one parameter
 export const updateExerciseList = ({
   exerciseListId,
   params,
-}: {
-  exerciseListId: string;
-  params: UpdateExerciseListParams;
-}): Promise<ExerciseList> => {
+}: UpdateExerciseListParams): Promise<ExerciseList> => {
   return axiosInstance.put('/exerciseLists/' + exerciseListId, params);
 };
 
