@@ -1,4 +1,5 @@
 import ConfirmationDialog from '@/components/ConfirmationDialog';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -22,6 +23,7 @@ import ExerciseListFormDialog from '@/features/exercise-list/components/Exercise
 import { useStore } from '@/stores';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
+import { Plus } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 const Home = () => {
@@ -92,6 +94,11 @@ const Home = () => {
     }
   };
 
+  const handleCloseForm = () => {
+    setOpenExerciseListFormDialog(false);
+    selectedExerciseList.current = null;
+  };
+
   useEffect(() => {
     if (isLoading || !isError) return;
     alert('Error fetching exercise lists.');
@@ -102,14 +109,20 @@ const Home = () => {
       <Card className="mx-4 sm:mx-0">
         <CardHeader>
           <div className="flex flex-row justify-between items-center">
-            <div>
+            <div className="flex flex-col gap-2">
               <CardTitle>Exercise Lists</CardTitle>
               <CardDescription>List of your programs or exercises.</CardDescription>
             </div>
             <div>
+              <div>
+                <Button onClick={() => setOpenExerciseListFormDialog(true)}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add List
+                </Button>
+              </div>
               <ExerciseListFormDialog
                 open={openExerciseListFormDialog}
-                handleClose={() => setOpenExerciseListFormDialog(false)}
+                handleClose={() => handleCloseForm()}
                 handleSubmit={(values) => handleSubmit(values)}
                 exerciseList={selectedExerciseList.current}
                 isLoading={

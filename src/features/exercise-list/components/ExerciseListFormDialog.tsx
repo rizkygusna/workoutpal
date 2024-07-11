@@ -6,7 +6,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   Form,
@@ -17,25 +16,25 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-// import { useStore } from '@/stores';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus } from 'lucide-react';
-// import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ExerciseList } from '../api/get-exercise-lists';
 import {
   exerciseListFormSchema,
   ExerciseListFormSchema,
 } from '../api/create-exercise-list';
-// import { useCreateExerciseList } from '../api/create-exercise-list';
+import { useEffect } from 'react';
 
 interface IProps {
   open: boolean;
   isLoading: boolean;
-  exerciseList?: ExerciseList | null;
+  exerciseList?: ExerciseList | null; // default values
   handleClose: () => void;
   handleSubmit: (values: ExerciseListFormSchema) => void;
 }
+
+const addDescriptionText = 'Add a new list of exercises.';
+const editDescriptionText = 'Edit your list of exercises.';
 
 function ExerciseListFormDialog({
   open,
@@ -46,26 +45,34 @@ function ExerciseListFormDialog({
 }: IProps) {
   const form = useForm<ExerciseListFormSchema>({
     resolver: zodResolver(exerciseListFormSchema),
-    defaultValues: exerciseList
-      ? {
-          listName: exerciseList.name,
-          description: exerciseList.description,
-        }
-      : { listName: '', description: '' },
+    defaultValues: { listName: '', description: '' },
   });
 
+  useEffect(() => {
+    if (!exerciseList || !open) return;
+    form.reset(
+      {
+        listName: exerciseList.name,
+        description: exerciseList.description,
+      },
+      { keepDefaultValues: true }
+    );
+  }, [exerciseList, open, form]);
+
   return (
-    <Dialog open={open} onOpenChange={() => handleClose()}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add List
-        </Button>
-      </DialogTrigger>
+    <Dialog
+      open={open}
+      onOpenChange={() => {
+        handleClose();
+        form.reset();
+      }}
+    >
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add list</DialogTitle>
-          <DialogDescription>Add a new list of exercises.</DialogDescription>
+          <DialogTitle>{exerciseList ? 'Edit list' : 'Add list'}</DialogTitle>
+          <DialogDescription>
+            {exerciseList ? editDescriptionText : addDescriptionText}
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)}>

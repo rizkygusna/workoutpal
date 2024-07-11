@@ -2,7 +2,6 @@ import { axiosInstance } from '@/lib/axios';
 import { MutationConfig } from '@/lib/react-query';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ExerciseList } from './get-exercise-lists';
-import { getExerciseListByIdQueryOptions } from './get-exercise-list-by-id';
 import { ExerciseListFormSchema } from './create-exercise-list';
 
 interface UpdateExerciseListParams {
@@ -31,7 +30,7 @@ export const useUpdateExerciseList = ({
   return useMutation({
     onSuccess: (data, ...args) => {
       queryClient.invalidateQueries({
-        queryKey: getExerciseListByIdQueryOptions({ listId: data.id }).queryKey,
+        queryKey: ['exerciseLists'],
       });
       onSuccess?.(data, ...args);
     },
