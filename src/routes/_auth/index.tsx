@@ -146,7 +146,7 @@ const Home = () => {
               <ExerciseCard
                 key={exerciseList.id}
                 {...exerciseList}
-                handleClick={() => navigate({ to: `/exerciseLists/${exerciseList.id}` })}
+                handleClick={() => navigate({ to: `/exercise-lists/${exerciseList.id}` })}
                 handleClickEdit={() => handleClickEdit(exerciseList)}
                 handleClickDelete={() => handleClickDelete(exerciseList)}
               ></ExerciseCard>

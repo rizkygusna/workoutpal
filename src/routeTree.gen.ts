@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as AuthIndexImport } from './routes/_auth/index'
+import { Route as AuthExerciseListsListIdImport } from './routes/_auth/exercise-lists/$listId'
 
 // Create/Update Routes
 
@@ -29,6 +30,11 @@ const AuthRoute = AuthImport.update({
 
 const AuthIndexRoute = AuthIndexImport.update({
   path: '/',
+  getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthExerciseListsListIdRoute = AuthExerciseListsListIdImport.update({
+  path: '/exercise-lists/$listId',
   getParentRoute: () => AuthRoute,
 } as any)
 
@@ -48,13 +54,17 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthIndexImport
       parentRoute: typeof AuthImport
     }
+    '/_auth/exercise-lists/$listId': {
+      preLoaderRoute: typeof AuthExerciseListsListIdImport
+      parentRoute: typeof AuthImport
+    }
   }
 }
 
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren([
-  AuthRoute.addChildren([AuthIndexRoute]),
+  AuthRoute.addChildren([AuthIndexRoute, AuthExerciseListsListIdRoute]),
   LoginRoute,
 ])
 
