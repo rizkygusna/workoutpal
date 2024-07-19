@@ -1,4 +1,5 @@
-import { defineConfig } from 'vite';
+// import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import { TanStackRouterVite } from '@tanstack/router-vite-plugin';
 import react from '@vitejs/plugin-react';
 import path from 'path';
@@ -10,5 +11,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+  },
+  test: {
+    environment: 'jsdom',
   },
 });
