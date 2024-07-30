@@ -10,7 +10,7 @@ interface GetExerciseListByIdParams {
 const getExerciseListById = (
   params: GetExerciseListByIdParams
 ): Promise<ExerciseList> => {
-  return axiosInstance.get('/exerciseList/' + params.listId);
+  return axiosInstance.get('/exerciseLists/' + params.listId);
 };
 
 export const getExerciseListByIdQueryOptions = (params: GetExerciseListByIdParams) => {
