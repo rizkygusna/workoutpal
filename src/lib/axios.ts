@@ -29,11 +29,11 @@ axiosInstance.interceptors.request.use(
 
 // Handle response data and handle error
 axiosInstance.interceptors.response.use(
-  (response) => response.data,
-  (error) => {
-    const message = 'Error fetching data, please try again.';
-    alert(message);
-    console.log(error);
-    return Promise.reject(error);
-  }
+  (response) => response.data
+  // (error) => {
+  //   const message = 'Error fetching data, please try again.';
+  //   alert(message);
+  //   console.log(error);
+  //   return Promise.reject(error);
+  // }
 );

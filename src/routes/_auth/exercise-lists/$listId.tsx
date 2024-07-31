@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -12,6 +13,7 @@ import { useGetExerciseListExercises } from '@/features/exercise-list/api/get-ex
 import { cn } from '@/lib/utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
+import { Plus } from 'lucide-react';
 import { useEffect, Fragment } from 'react';
 
 const ExerciseListExercises = () => {
@@ -34,6 +36,12 @@ const ExerciseListExercises = () => {
           <div className="flex flex-col gap-2">
             <CardTitle>{exerciseListByIdData.data.name} Exercises</CardTitle>
             <CardDescription>{exerciseListByIdData.data.description}</CardDescription>
+          </div>
+          <div>
+            <Button onClick={() => {}}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Exercises
+            </Button>
           </div>
         </div>
       </CardHeader>
