@@ -24,7 +24,8 @@ const queryConfig: DefaultOptions = {
     retryDelay: (
       attempt // add exponential backoff
     ) => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000),
-    throwOnError: true,
+    // throwOnError: true,
+    staleTime: 2 * 60 * 1000, // in minutes
   },
 };
 
