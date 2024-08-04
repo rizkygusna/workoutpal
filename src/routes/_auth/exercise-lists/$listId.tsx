@@ -10,10 +10,11 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useGetExerciseListById } from '@/features/exercise-list/api/get-exercise-list-by-id';
 import { useGetExerciseListExercises } from '@/features/exercise-list/api/get-exercise-list-exercises';
+import AddExerciseDialog from '@/features/exercise-list/components/AddExerciseDialog';
 import { cn } from '@/lib/utils';
 import { createFileRoute } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
-import { useEffect, Fragment } from 'react';
+import { useEffect, Fragment, useState } from 'react';
 
 const ExerciseListExercises = () => {
   const { listId } = Route.useParams();
@@ -23,6 +24,8 @@ const ExerciseListExercises = () => {
     isError: listIsError,
   } = useGetExerciseListById({ params: { listId } });
   const { data, isPending, isError } = useGetExerciseListExercises({ listId });
+
+  const [openAddExerciseDialog, setopenAddExerciseDialog] = useState<boolean>(false);
 
   useEffect(() => {
     if (isPending || !isError) return;
@@ -50,7 +53,7 @@ const ExerciseListExercises = () => {
             </div>
           )}
           <div>
-            <Button onClick={() => {}}>
+            <Button onClick={() => setopenAddExerciseDialog(true)}>
               <Plus className="mr-2 h-4 w-4" />
               Add Exercises
             </Button>
@@ -85,6 +88,14 @@ const ExerciseListExercises = () => {
           ))
         )}
       </CardContent>
+      <AddExerciseDialog
+        open={openAddExerciseDialog}
+        handleClose={() => setopenAddExerciseDialog(false)}
+        isLoading={false}
+        handleSubmit={function (): void {
+          throw new Error('Function not implemented.');
+        }}
+      />
     </Card>
   );
 };
