@@ -2,7 +2,7 @@ import { axiosInstance } from '@/lib/axios';
 import { QueryConfig } from '@/lib/react-query';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 
-interface Exercise {
+export interface Exercise {
   id: string;
   name: string;
 }
