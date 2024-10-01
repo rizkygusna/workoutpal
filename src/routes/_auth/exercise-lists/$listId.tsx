@@ -10,7 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useGetExerciseListById } from '@/features/exercise-list/api/get-exercise-list-by-id';
 import { useGetExerciseListExercises } from '@/features/exercise-list/api/get-exercise-list-exercises';
-import AddExerciseDialog from '@/features/exercise-list/components/AddExerciseDialog';
+import ManageExerciseDialog from '@/features/exercise-list/components/ManageExerciseDialog';
 import { cn } from '@/lib/utils';
 import { createFileRoute } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
@@ -23,7 +23,9 @@ const ExerciseListExercises = () => {
     isPending: listIsPending,
     isError: listIsError,
   } = useGetExerciseListById({ params: { listId } });
-  const { data, isPending, isError } = useGetExerciseListExercises({ listId });
+  const { data, isPending, isError } = useGetExerciseListExercises({
+    listId: parseInt(listId),
+  });
 
   const [openAddExerciseDialog, setopenAddExerciseDialog] = useState<boolean>(false);
 
@@ -88,13 +90,11 @@ const ExerciseListExercises = () => {
           ))
         )}
       </CardContent>
-      <AddExerciseDialog
+      <ManageExerciseDialog
         open={openAddExerciseDialog}
         handleClose={() => setopenAddExerciseDialog(false)}
-        isLoading={false}
-        handleSubmit={function (): void {
-          throw new Error('Function not implemented.');
-        }}
+        handleSubmit={(values) => console.log(values)}
+        initExercises={data ?? []}
       />
     </Card>
   );

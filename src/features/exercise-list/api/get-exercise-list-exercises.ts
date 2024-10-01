@@ -3,15 +3,15 @@ import { QueryConfig } from '@/lib/react-query';
 import { queryOptions, useQuery } from '@tanstack/react-query';
 
 export interface Exercise {
-  id: string;
+  id: number;
   name: string;
 }
 
-const getExerciseListExercises = (listId: string): Promise<Exercise[]> => {
+const getExerciseListExercises = (listId: number): Promise<Exercise[]> => {
   return axiosInstance.get(`/exerciseLists/${listId}/exercises`);
 };
 
-export const getExerciseListExercisesQueryOptions = (listId: string) => {
+export const getExerciseListExercisesQueryOptions = (listId: number) => {
   return queryOptions({
     queryKey: ['exerciseListExercises', listId],
     queryFn: () => getExerciseListExercises(listId),
@@ -20,7 +20,7 @@ export const getExerciseListExercisesQueryOptions = (listId: string) => {
 };
 
 type UseGetExerciseListExercises = {
-  listId: string;
+  listId: number;
   queryConfig?: QueryConfig<typeof getExerciseListExercisesQueryOptions>;
 };
 
