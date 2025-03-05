@@ -14,7 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Exercise } from '../api/get-exercise-list-exercises';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 interface IProps {
   open: boolean;
@@ -40,7 +40,9 @@ const ManageExerciseDialog = ({
     params: { userId: user!.email },
     queryConfig: { enabled: open && !!user?.email },
   });
-  const defaultValues = initExercises.map((exercise) => exercise.id);
+  const defaultValues = useMemo(() => {
+    return initExercises.map((exercise) => exercise.id);
+  }, [initExercises]);
 
   const form = useForm<TUpdateExerciseListExercises>({
     resolver: zodResolver(FormSchema),
