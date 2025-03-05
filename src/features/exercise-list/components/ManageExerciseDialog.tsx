@@ -24,7 +24,7 @@ interface IProps {
 }
 
 const FormSchema = z.object({
-  exercisesIds: z.array(z.number().min(1)).nonempty(),
+  exercisesIds: z.array(z.number().min(1)),
 });
 
 export type TUpdateExerciseListExercises = z.infer<typeof FormSchema>;
@@ -50,8 +50,7 @@ const ManageExerciseDialog = ({
   // Update default value when init exercise changes
   useEffect(() => {
     form.reset({ exercisesIds: defaultValues });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initExercises, form]);
+  }, [defaultValues, form]);
 
   return (
     <Dialog open={open} onOpenChange={() => handleClose()}>

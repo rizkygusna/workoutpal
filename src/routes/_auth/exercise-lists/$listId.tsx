@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useGetExerciseListById } from '@/features/exercise-list/api/get-exercise-list-by-id';
 import { useGetExerciseListExercises } from '@/features/exercise-list/api/get-exercise-list-exercises';
+import { useUpdateExerciseListExercises } from '@/features/exercise-list/api/update-exercise-list-exercises';
 import ManageExerciseDialog from '@/features/exercise-list/components/ManageExerciseDialog';
 import { cn } from '@/lib/utils';
 import { createFileRoute } from '@tanstack/react-router';
@@ -27,7 +28,19 @@ const ExerciseListExercises = () => {
     listId: parseInt(listId),
   });
 
+  const { mutate } = useUpdateExerciseListExercises({
+    mutationConfig: {
+      onSuccess: () => {
+        setopenAddExerciseDialog(false);
+      },
+    },
+  });
+
   const [openAddExerciseDialog, setopenAddExerciseDialog] = useState<boolean>(false);
+
+  const handleSubmit = (values: { exercisesIds: number[] }) => {
+    mutate({ exerciseIds: values.exercisesIds, listId: parseInt(listId) });
+  };
 
   useEffect(() => {
     if (isPending || !isError) return;
@@ -57,7 +70,7 @@ const ExerciseListExercises = () => {
           <div>
             <Button onClick={() => setopenAddExerciseDialog(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Exercises
+              Manage Exercises
             </Button>
           </div>
         </div>
@@ -93,7 +106,7 @@ const ExerciseListExercises = () => {
       <ManageExerciseDialog
         open={openAddExerciseDialog}
         handleClose={() => setopenAddExerciseDialog(false)}
-        handleSubmit={(values) => console.log(values)}
+        handleSubmit={handleSubmit}
         initExercises={data ?? []}
       />
     </Card>
