@@ -12,13 +12,14 @@ import { useGetExerciseListById } from '@/features/exercise-list/api/get-exercis
 import { useGetExerciseListExercises } from '@/features/exercise-list/api/get-exercise-list-exercises';
 import { useUpdateExerciseListExercises } from '@/features/exercise-list/api/update-exercise-list-exercises';
 import ManageExerciseDialog from '@/features/exercise-list/components/ManageExerciseDialog';
-import { cn } from '@/lib/utils';
+import SetFormDialog from '@/features/exercise-list/components/SetFormDialog';
 import { createFileRoute } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
-import { useEffect, Fragment, useState } from 'react';
+import { useEffect, Fragment, useState, useRef } from 'react';
 
 const ExerciseListExercises = () => {
   const { listId } = Route.useParams();
+  const exerciseId = useRef<number | null>(null);
   const {
     data: listData,
     isPending: listIsPending,
@@ -37,9 +38,15 @@ const ExerciseListExercises = () => {
   });
 
   const [openAddExerciseDialog, setopenAddExerciseDialog] = useState<boolean>(false);
+  const [openAddSetDialog, setopenAddSetDialog] = useState<boolean>(false);
 
   const handleSubmit = (values: { exercisesIds: number[] }) => {
     mutate({ exerciseIds: values.exercisesIds, listId: parseInt(listId) });
+  };
+
+  const handleAddSet = (selectedExerciseId: number) => {
+    exerciseId.current = selectedExerciseId;
+    setopenAddSetDialog(true);
   };
 
   useEffect(() => {
@@ -89,16 +96,13 @@ const ExerciseListExercises = () => {
         ) : (
           data?.map((exercise, index, array) => (
             <Fragment key={exercise.id}>
-              <div
-                className={cn(
-                  'my-4',
-                  index === array.length - 1 ? 'mb-0' : '',
-                  index === 0 && 'mt-0'
-                )}
-              >
-                {exercise.name}
+              <div className="flex flex-row justify-between items-center ">
+                <div>{exercise.name}</div>
+                <Button variant="ghost" onClick={() => handleAddSet(exercise.id)}>
+                  <Plus className="h-4 w-4" />
+                </Button>
               </div>
-              {index < array.length - 1 && <Separator />}
+              {index < array.length - 1 && <Separator className="my-2" />}
             </Fragment>
           ))
         )}
@@ -108,6 +112,14 @@ const ExerciseListExercises = () => {
         handleClose={() => setopenAddExerciseDialog(false)}
         handleSubmit={handleSubmit}
         initExercises={data ?? []}
+      />
+      <SetFormDialog
+        open={openAddSetDialog}
+        handleClose={() => {
+          exerciseId.current = null;
+          setopenAddSetDialog(false);
+        }}
+        selectedExerciseId={exerciseId!.current}
       />
     </Card>
   );
